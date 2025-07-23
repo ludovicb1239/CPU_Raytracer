@@ -11,7 +11,8 @@ BIN_EXE = CPU_Raytracer.exe
 # Ryzen 7 optimized flags
 CFLAGS = -std=c17 -pthread -flto
 OPTI_FLAGS = -O3 -march=znver3 -mtune=znver3 -m64 -ffast-math -funroll-loops
-LDFLAGS = -Iinclude -lm -lpthread -flto -IOpenImageDenoise/include -L OpenImageDenoise/lib -lOpenImageDenoise
+LDFLAGS = -Iinclude -lm -lpthread -flto -IOpenImageDenoise/include -L OpenImageDenoise/lib
+#-lOpenImageDenoise
 
 .PHONY: build_program build_test test profile debug run clean
 
