@@ -1,2 +1,2 @@
-apt install make gcc gdb valgrind
+sudo apt install make gcc gdb valgrind
 # This will install the necessary tools to compile and debug C programs.
