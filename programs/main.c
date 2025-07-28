@@ -57,6 +57,8 @@ VECTOR randomVECTOR();
 void drawImage(Image *image){};
 
 void denoise(float* image){
+/*
+
     // Allocate memory for float
     float *outData = (float *)malloc(width * height * 3 * sizeof(float));
     // Create an Intel Open Image Denoise device
@@ -89,6 +91,8 @@ void denoise(float* image){
     }
     Sauver(denoisedI,"denoised.bmp");
     DelImage(denoisedI);
+*/
+
 }
 
 void *myThreadFun(ThreadInfo* info)
