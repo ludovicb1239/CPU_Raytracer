@@ -1,3 +1,4 @@
 sudo apt-get update
 sudo apt install make gcc gdb valgrind
+sudo apt install libopenimagedenoise-dev
 # This will install the necessary tools to compile and debug C programs.
