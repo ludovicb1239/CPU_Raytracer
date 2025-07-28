@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-SRC = src/01_09_02_bmp.c
+SRC = src/image.c src/renderer.c src/denoiser.c
 SRC_PROGRAM = programs/main.c
 SRC_TEST = programs/tests.c
 BIN_DIR_RELEASE = bin/Release/
@@ -26,7 +26,7 @@ debug:
 	$(CC) $(CFLAGS) -g -pg $(SRC) $(SRC_PROGRAM) -o $(BIN_DIR_DEBUG)$(BIN_EXE) $(LDFLAGS)
 
 test: build_test
-	(cd $(BIN_DIR_RELEASE) && ./$(BIN_EXE))
+	(cd $(BIN_DIR_TEST) && ./$(BIN_EXE))
 
 
 profile: debug
