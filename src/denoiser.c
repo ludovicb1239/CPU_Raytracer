@@ -1,18 +1,20 @@
 #include "denoiser.h"
 #include "OpenImageDenoise/oidn.h"
 
-void denoise(float* image){
-/*
+#include "raw_render.h"
+#include <stdio.h>
 
+void denoise(RAW_RENDER r){
+/*
     // Allocate memory for float
-    float *outData = (float *)malloc(width * height * 3 * sizeof(float));
+    RAW_RENDER out_render = raw_new(r.w, r.h);
     // Create an Intel Open Image Denoise device
     OIDNDevice device = oidnNewDevice(OIDN_DEVICE_TYPE_DEFAULT);
     oidnCommitDevice(device);
 
-    OIDNFilter filter = oidnNewFilter(device, "RT"); // generic ray tracing filte
-    oidnSetSharedFilterImage(filter, "color", image, OIDN_FORMAT_FLOAT3, width, height, 0, 0, 0);
-    oidnSetSharedFilterImage(filter, "output", outData, OIDN_FORMAT_FLOAT3, width, height, 0, 0, 0); // denoised beauty
+    OIDNFilter filter = oidnNewFilter(device, "RT"); // generic ray tracing filter
+    oidnSetSharedFilterImage(filter, "color", r.p, OIDN_FORMAT_FLOAT3, r.w, r.h, 0, 0, 0);
+    oidnSetSharedFilterImage(filter, "output", out_render.p, OIDN_FORMAT_FLOAT3, r.w, r.h, 0, 0, 0); // denoised beauty
     //oidnSetFilter1b(filter, "hdr", true); // beauty image is HDR
     oidnCommitFilter(filter);
     // Filter the image
@@ -27,15 +29,10 @@ void denoise(float* image){
     oidnReleaseFilter(filter);
     oidnReleaseDevice(device);
 
+    RAW_RENDER t = r;
+    r = out_render;
+    raw_delete(t); // Delete the noisy input
+
     printf("\nSuccessfully denoised the image\n");
-
-    Image* denoisedI = NouvelleImage(width,height);
-    for (int i = 0; i < width * height; i++)
-    {
-        denoisedI->dat[i] = (Pixel){outData[i *3] * 255, outData[i *3 + 1] * 255, outData[i *3 + 2] * 255};
-    }
-    Sauver(denoisedI,"denoised.bmp");
-    DelImage(denoisedI);
-*/
-
+  */
 }

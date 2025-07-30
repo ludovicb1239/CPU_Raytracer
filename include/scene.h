@@ -9,8 +9,6 @@ typedef struct {
     VECTOR camera;
     OBJECT* objects;
     int objectCount;
-    Image* render;
-    float* pixelArray;
 } SCENE;
 
 #endif // SCENE_H

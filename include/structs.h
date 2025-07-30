@@ -3,6 +3,8 @@
 
 #include "vector.h"
 
+#define PI 3.14159265359
+
 typedef struct{
     VECTOR center;
     float radius;

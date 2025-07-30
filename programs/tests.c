@@ -14,8 +14,6 @@
 #define MAX_DEPTH 8         //Bounces
 #define MAX_SAMPLES 10      //Number of samples per 1/4 pixel
 
-#define PI 3.14159265359
-
 #define OBJECT_COUNT 9
 
 int main(int argc, char *argv[])
@@ -53,9 +51,7 @@ int main(int argc, char *argv[])
     SCENE scene = {
         .camera = {0, 0, 1},  //Camera pos
         .objects = objects,
-        .objectCount = OBJECT_COUNT,
-        .render = NouvelleImage(width, height),
-        .pixelArray = (float *)malloc(width * height * 3 * sizeof(float))
+        .objectCount = OBJECT_COUNT
     };
     RENDER_PARAMS params = {
         .max_depth = MAX_DEPTH,
@@ -68,25 +64,18 @@ int main(int argc, char *argv[])
     printf("Starting render ...\n");
     clock_t begin = clock();
     
-    render_scene(&scene, params);
-
+    RAW_RENDER render = render_scene(&scene, params);
 
     clock_t end = clock();
     unsigned long millis = (end -  begin) * 1000 / CLOCKS_PER_SEC;
     printf("\nFinished in %ld ms", millis );
 
-    Sauver(scene.render,"render.bmp");
+    raw_save_bmp(render, "render.bmp");
 
-    printf("\nSaved Raw Render");
+    denoise(render);
+    raw_save_bmp(render, "denoised.bmp");
 
-    denoise(scene.pixelArray);
-
-    //drawImage(scene.render);
-
-    DelImage(scene.render);
-
-    printf("\nSaved Denoised Render");
+    raw_delete(render);
 
     return 0;
 }
-

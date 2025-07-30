@@ -2,6 +2,7 @@
 #define RENDERER_H
 
 #include "scene.h"
+#include "raw_render.h"
 
 typedef struct {
     int max_depth; // Maximum depth of ray tracing
@@ -11,6 +12,6 @@ typedef struct {
     int threadPixelSize; // Number of pixels wide in a single thread
 } RENDER_PARAMS;
 
-void render_scene(SCENE *scene, RENDER_PARAMS params);
+RAW_RENDER render_scene(SCENE *scene, RENDER_PARAMS params);
 
 #endif

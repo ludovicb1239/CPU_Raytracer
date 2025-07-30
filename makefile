@@ -1,6 +1,6 @@
 # Compiler and flags
 CC = gcc
-SRC = src/image.c src/renderer.c src/denoiser.c
+SRC = src/image.c src/renderer.c src/denoiser.c src/raw_render.c
 SRC_PROGRAM = programs/main.c
 SRC_TEST = programs/tests.c
 BIN_DIR_RELEASE = bin/Release/

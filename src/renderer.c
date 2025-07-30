@@ -9,14 +9,17 @@ typedef struct{
     int threadHeight;
     SCENE *scene;
     RENDER_PARAMS params;
+    RAW_RENDER render;
     float* screen;
     float stepY;
     float stepX;
 }ThreadInfo;
-
+ 
 
 int sphere_intersect(VECTOR center, float radius, VECTOR ray_origin, VECTOR ray_direction, double *dist);
 int nearest_intersected_object(OBJECT objects[], VECTOR ray_origin, VECTOR ray_direction, OBJECT *nearest_object, double *min_distance, int objectsCount);
+
+static int threads_done;
 
 void *myThreadFun(ThreadInfo* info)
 {
@@ -50,8 +53,8 @@ void *myThreadFun(ThreadInfo* info)
     int startPixelWitdh = info->params.threadPixelSize * (info->threadWitdh);
     int stopPixelWitdh = info->params.threadPixelSize * (info->threadWitdh + 1);
 
-    int width = info->params.widthThreads * info->params.threadPixelSize;
-    int height = info->params.heightThreads * info->params.threadPixelSize;
+    int width = info->render.w;
+    int height = info->render.h;
 
     for (i = startPixelHeight; i < stopPixelHeight; i++){
         y = (info->screen)[1] + info->stepY * i;
@@ -180,23 +183,22 @@ void *myThreadFun(ThreadInfo* info)
             color.x = sqrt(color.x);
             color.y = sqrt(color.y);
             color.z = sqrt(color.z);
-            info->scene->pixelArray[3 * (j + i * width)] = color.x;
-            info->scene->pixelArray[3 * (j + i * width) + 1] = color.y;
-            info->scene->pixelArray[3 * (j + i * width) + 2] = color.z;
-            SetPixelBMP(info->scene->render,j,i,(Pixel) {(unsigned char)clampColor(color.x), (unsigned char)clampColor(color.y), (unsigned char)clampColor(color.z)});
+            raw_write_pixel(info->render, j, i, color);
         }
     }
-    fprintf(stderr, "Made\t%d\t%d \r", info->threadWitdh, info->threadHeight);
+    threads_done++;
+    fprintf(stderr, "Made\t%d\t/\t%d \r", threads_done, info->threadWitdh * info->threadHeight);
     pthread_exit(NULL);
     return NULL;
 }
 
-void render_scene(SCENE *scene, RENDER_PARAMS params){
+RAW_RENDER render_scene(SCENE *scene, RENDER_PARAMS params){
     srand(2465); //random seed
     
     int width = params.widthThreads * params.threadPixelSize;
     int height = params.heightThreads * params.threadPixelSize;
 
+    RAW_RENDER m_render = raw_new(width, height);
 
     float ratio = (float)width / (float)height;
     float screen[4] = {-1, 1.0 / ratio, 1, -1.0 / ratio}; // left, top, right, bottom
@@ -207,8 +209,8 @@ void render_scene(SCENE *scene, RENDER_PARAMS params){
     int totalThreads = params.widthThreads * params.heightThreads;
     pthread_t threads[totalThreads];
     ThreadInfo info[totalThreads];
-    float *pixelArray = (float *)malloc(width * height * 3 * sizeof(float));
     int n = 0;
+    threads_done = 0;
     for (i = 0; i < params.widthThreads; i++){
         for (j = 0; j < params.heightThreads; j++){
             info[n] = (ThreadInfo){
@@ -217,6 +219,7 @@ void render_scene(SCENE *scene, RENDER_PARAMS params){
                 .scene = scene,
                 .params = params,
                 .screen = screen,
+                .render = m_render,
                 .stepY = stepY,
                 .stepX = stepX
             };
@@ -227,6 +230,7 @@ void render_scene(SCENE *scene, RENDER_PARAMS params){
     for (n = 0; n < totalThreads; n++) {
         pthread_join(threads[n], NULL); //Waiting for every thread to be done
     }
+    return m_render;
 }
 inline int sphere_intersect(VECTOR center, float radius, VECTOR ray_origin, VECTOR ray_direction, double *dist){
     VECTOR m = substractVectors(ray_origin, center);

@@ -3,3 +3,9 @@
 *.o
 *.bmp
 *.exe
+*.out
+
+
+#ignore build directories
+build/
+bin/

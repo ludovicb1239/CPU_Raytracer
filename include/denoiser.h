@@ -1,6 +1,8 @@
 #ifndef DENOISER_H
 #define DENOISER_H
 
-void denoise(float* image);
+#include "raw_render.h"
+
+void denoise(RAW_RENDER image);
 
 #endif // DENOISER_H
