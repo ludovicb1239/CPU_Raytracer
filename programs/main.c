@@ -72,10 +72,11 @@ int main(int argc, char *argv[])
 
     raw_save_bmp(render, "render.bmp");
 
-    denoise(render);
-    raw_save_bmp(render, "denoised.bmp");
+    RAW_RENDER denoised = denoise(render);
+    raw_save_bmp(denoised, "denoised.bmp");
 
     raw_delete(render);
+    raw_delete(denoised);
 
     return 0;
 }
