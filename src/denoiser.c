@@ -5,7 +5,6 @@
 #include <stdio.h>
 
 void denoise(RAW_RENDER r){
-/*
     // Allocate memory for float
     RAW_RENDER out_render = raw_new(r.w, r.h);
     // Create an Intel Open Image Denoise device
@@ -34,5 +33,4 @@ void denoise(RAW_RENDER r){
     raw_delete(t); // Delete the noisy input
 
     printf("\nSuccessfully denoised the image\n");
-  */
 }
