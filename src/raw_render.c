@@ -6,7 +6,7 @@
 
 RAW_RENDER raw_new(int _w, int _h){
     assert(_w > 0 && _h > 0);
-    VECTOR* _p = (VECTOR *)malloc(_w * _h * sizeof(VECTOR));
+    RAW_COLOR* _p = (RAW_COLOR *)calloc(_w * _h, sizeof(RAW_COLOR));
     RAW_RENDER r = {
         .w = _w,
         .h = _h,

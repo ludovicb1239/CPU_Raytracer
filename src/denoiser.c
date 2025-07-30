@@ -3,6 +3,7 @@
 
 #include "raw_render.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 RAW_RENDER denoise(RAW_RENDER r){
     // Allocate memory for float
@@ -20,10 +21,10 @@ RAW_RENDER denoise(RAW_RENDER r){
     oidnExecuteFilter(filter);
 
     // Check for errors
-    const char* errorMessage;
-    if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE){
-      printf("Error: %s\n", errorMessage);
-      exit(0);
+    const char* errorMessage = NULL;
+    if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE) {
+        printf("Device error: %s\n", errorMessage);
+        exit(1);
     }
 
     // Cleanup

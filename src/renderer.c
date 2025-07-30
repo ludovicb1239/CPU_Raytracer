@@ -23,14 +23,14 @@ static int threads_done;
 
 void *myThreadFun(ThreadInfo* info)
 {
-    const VECTOR backgroundColor = {0,0,0};
+    const RAW_COLOR backgroundColor = {0,0,0};
     float y;
     float x;
-    VECTOR color;
+    RAW_COLOR color;
     VECTOR pixel;
     VECTOR directions[4];
     VECTOR direction;
-    VECTOR reflection;
+    RAW_COLOR reflection;
 
     VECTOR intersections[4];
     VECTOR intersection;
@@ -74,7 +74,7 @@ void *myThreadFun(ThreadInfo* info)
                         typeOfIntersection[ind] = 2;
                     }else{
                         nearest_objects[ind] = nearest_object;
-                        if (nearest_objects[ind].colorAbsorbtion.x > 1){
+                        if (nearest_objects[ind].colorAbsorbtion.r > 1){
                             //bright color
                             typeOfIntersection[ind] = 1;
                         }else{
@@ -88,9 +88,9 @@ void *myThreadFun(ThreadInfo* info)
                 }
             }
 
-            color.x = 0; //r
-            color.y = 0; //g
-            color.z = 0; //b
+            color.r = 0; //r
+            color.g = 0; //g
+            color.b = 0; //b
 
             for (dx = 0; dx < 2; dx++){
                 for (dy = 0; dy < 2; dy++){
@@ -98,15 +98,15 @@ void *myThreadFun(ThreadInfo* info)
 
                     if (typeOfIntersection[ind] == 1){
                         //bright color, clamp it
-                        color.x += nearest_objects[ind].colorAbsorbtion.x > 1 ? 1 : nearest_objects[ind].colorAbsorbtion.x;
-                        color.y += nearest_objects[ind].colorAbsorbtion.y > 1 ? 1 : nearest_objects[ind].colorAbsorbtion.y;
-                        color.z += nearest_objects[ind].colorAbsorbtion.z > 1 ? 1 : nearest_objects[ind].colorAbsorbtion.z;
+                        color.r += nearest_objects[ind].colorAbsorbtion.r > 1 ? 1 : nearest_objects[ind].colorAbsorbtion.r;
+                        color.g += nearest_objects[ind].colorAbsorbtion.g > 1 ? 1 : nearest_objects[ind].colorAbsorbtion.g;
+                        color.b += nearest_objects[ind].colorAbsorbtion.b > 1 ? 1 : nearest_objects[ind].colorAbsorbtion.b;
 
                     }else if (typeOfIntersection[ind] == 2){
                         //sky, return sky color
-                        color.x += backgroundColor.x;
-                        color.y += backgroundColor.y;
-                        color.z += backgroundColor.z;
+                        color.r += backgroundColor.r;
+                        color.g += backgroundColor.g;
+                        color.b += backgroundColor.b;
 
                     }else{
                         //Set numbers of samples by roughness
@@ -118,22 +118,22 @@ void *myThreadFun(ThreadInfo* info)
                             nearest_object = nearest_objects[ind];
                             insideOfSphere = insidesOfSphere[ind];
 
-                            reflection.x = 1;
-                            reflection.y = 1;
-                            reflection.z = 1;
+                            reflection.r = 1;
+                            reflection.g = 1;
+                            reflection.b = 1;
 
-                            VECTOR accumColor = {0, 0, 0};
+                            RAW_COLOR accumColor = {0, 0, 0};
                             for (int k = 0; k < info->params.max_depth; k++) {
-                                reflection.x *= nearest_object.colorAbsorbtion.x;
-                                reflection.y *= nearest_object.colorAbsorbtion.y;
-                                reflection.z *= nearest_object.colorAbsorbtion.z;
+                                reflection.r *= nearest_object.colorAbsorbtion.r;
+                                reflection.g *= nearest_object.colorAbsorbtion.g;
+                                reflection.b *= nearest_object.colorAbsorbtion.b;
 
-                                if (reflection.x <= 0.001 && reflection.y <= 0.001 && reflection.z <= 0.001) {
+                                if (reflection.r <= 0.001 && reflection.g <= 0.001 && reflection.b <= 0.001) {
                                     break; // early termination if negligible contribution
-                                } else if (reflection.x > 1.0 || reflection.y > 1.0 || reflection.z > 1.0) {
-                                    accumColor.x += reflection.x;
-                                    accumColor.y += reflection.y;
-                                    accumColor.z += reflection.z;
+                                } else if (reflection.r > 1.0 || reflection.g > 1.0 || reflection.b > 1.0) {
+                                    accumColor.r += reflection.r;
+                                    accumColor.g += reflection.g;
+                                    accumColor.b += reflection.b;
                                     break;
                                 }
 
@@ -154,9 +154,9 @@ void *myThreadFun(ThreadInfo* info)
                                 }
 
                                 if (!nearest_intersected_object(info->scene->objects, intersection, direction, &nearest_object, &min_distance, info->scene->objectCount)) {
-                                    accumColor.x += reflection.x * backgroundColor.x;
-                                    accumColor.y += reflection.y * backgroundColor.y;
-                                    accumColor.z += reflection.z * backgroundColor.z;
+                                    accumColor.r += reflection.r * backgroundColor.r;
+                                    accumColor.g += reflection.g * backgroundColor.g;
+                                    accumColor.b += reflection.b * backgroundColor.b;
                                     break;
                                 }
 
@@ -165,13 +165,13 @@ void *myThreadFun(ThreadInfo* info)
                                 normal_to_surface = normalize(substractVectors(intersection, nearest_object.center));
                             }
 
-                            color.x += accumColor.x / samples;
-                            color.y += accumColor.y / samples;
-                            color.z += accumColor.z / samples;
+                            color.r += accumColor.r / samples;
+                            color.g += accumColor.g / samples;
+                            color.b += accumColor.b / samples;
 
                             // Optional: If color converges early, break out of the sampling loop
                             if (sampling >= 4) {
-                                float avg = (color.x + color.y + color.z) / 3.0f;
+                                float avg = (color.r + color.g + color.b) / 3.0f;
                                 if (avg > 0.95) break;
                             }
                         }
@@ -179,10 +179,9 @@ void *myThreadFun(ThreadInfo* info)
                     }
                 }
             }
-            color = multiplyVectors(color, 0.25);
-            color.x = sqrt(color.x);
-            color.y = sqrt(color.y);
-            color.z = sqrt(color.z);
+            color.r = sqrt(color.r/4.0f);
+            color.g = sqrt(color.g/4.0f);
+            color.b = sqrt(color.b/4.0f);
             raw_write_pixel(info->render, j, i, color);
         }
     }
