@@ -8,14 +8,30 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Cache APT
+      uses: actions/cache@v4
+      with:
+        path: |
+          /var/cache/apt/archives
+          /var/lib/apt/lists
+        key: ${{ runner.os }}-apt-${{ hashFiles('configure') }}
+        restore-keys: |
+          ${{ runner.os }}-apt-
+
+    - name: Prepare APT
+      run: |
+        sudo apt-get update || true
+
     - name: configure
       run: chmod +x configure && ./configure
+
     - name: make
       run: make
+
     - name: make test
       run: make test
