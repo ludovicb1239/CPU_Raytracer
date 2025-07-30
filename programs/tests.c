@@ -8,7 +8,7 @@
 #include "denoiser.h"
 
 
-#define THREAD_PIXEL_SIZE 64  //Numbers of pixels in a single thread
+#define THREAD_PIXEL_SIZE 16  //Numbers of pixels in a single thread
 #define WIDTH_THREADS 16          // Number of threads in width
 #define HEIGHT_THREADS 9         // Number of threads in height
 #define MAX_DEPTH 8         //Bounces
@@ -68,14 +68,15 @@ int main(int argc, char *argv[])
 
     clock_t end = clock();
     unsigned long millis = (end -  begin) * 1000 / CLOCKS_PER_SEC;
-    printf("\nFinished in %ld ms", millis );
+    printf("\nFinished in %ld ms\n", millis );
 
     raw_save_bmp(render, "render.bmp");
 
-    denoise(render);
-    raw_save_bmp(render, "denoised.bmp");
+    RAW_RENDER denoised = denoise(render);
+    raw_save_bmp(denoised, "denoised.bmp");
 
     raw_delete(render);
+    raw_delete(denoised);
 
     return 0;
 }

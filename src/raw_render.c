@@ -33,6 +33,6 @@ Image* image_from_raw(RAW_RENDER r){
 void raw_save_bmp(RAW_RENDER r, const char* file){
     Image* final_bpm = image_from_raw(r);
     Sauver(final_bpm, file);
-    printf("\nSaved BMP Render");
+    printf("Saved BMP Render\n");
     DelImage(final_bpm);
 }

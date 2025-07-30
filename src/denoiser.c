@@ -4,7 +4,7 @@
 #include "raw_render.h"
 #include <stdio.h>
 
-void denoise(RAW_RENDER r){
+RAW_RENDER denoise(RAW_RENDER r){
     // Allocate memory for float
     RAW_RENDER out_render = raw_new(r.w, r.h);
     // Create an Intel Open Image Denoise device
@@ -21,16 +21,16 @@ void denoise(RAW_RENDER r){
 
     // Check for errors
     const char* errorMessage;
-    if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE)
-      printf("\nError: %s", errorMessage);
+    if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE){
+      printf("Error: %s\n", errorMessage);
+      exit(0);
+    }
 
     // Cleanup
     oidnReleaseFilter(filter);
     oidnReleaseDevice(device);
 
-    RAW_RENDER t = r;
-    r = out_render;
-    raw_delete(t); // Delete the noisy input
+    printf("Successfully denoised the image\n");
 
-    printf("\nSuccessfully denoised the image\n");
+    return out_render;
 }

@@ -3,6 +3,6 @@
 
 #include "raw_render.h"
 
-void denoise(RAW_RENDER image);
+RAW_RENDER denoise(RAW_RENDER image);
 
 #endif // DENOISER_H
