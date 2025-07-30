@@ -187,7 +187,7 @@ void *myThreadFun(ThreadInfo* info)
         }
     }
     threads_done++;
-    fprintf(stderr, "Made\t%d\t/\t%d \r", threads_done, info->threadWitdh * info->threadHeight);
+    fprintf(stderr, "Made\t%d\t/\t%d \r", threads_done, info->params.widthThreads * info->params.heightThreads);
     pthread_exit(NULL);
     return NULL;
 }
